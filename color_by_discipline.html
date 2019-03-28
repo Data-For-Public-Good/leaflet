@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Color by Discipline</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<style type="text/css">
+	#map { 
+		height: 700px;
+		 }
+	</style>
+</head>
+<body>
+<div id="map"/>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript">
+
+
+var map = L.map('map').setView([40.7590, -73.9844], 12);
+
+		
+var baseLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/{x}/{y}.png8', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+
+map.addLayer(labelLayer);
+
+// Parse local CSV file
+var data;
+
+Papa.parse('DCLA.csv', {
+  header: true,
+  download: true,
+  dynamicTyping: true,
+  complete: function(results) {
+	data = results.data;
+
+
+
+//create list of color options
+var color_options = ['blue','khaki', 'orange', 'sienna', 'lightsteelblue', 'greenyellow', 'darkgoldenrod', 'DeepPink', 'ForestGreen', 'lavenderblush', 'lightcyan', 'grey', 'brown', 'green', 'yellow', 'black', 'pink', 'red','purple', 'cadetblue', 'cornsilk']
+//create empty dictionary
+var color_dict = {}
+//create undefined color variable
+var circle_color = undefined
+//create counter (iterator)
+var iter = 0    
+
+//for each row in the list, as long as the index is lower than the length of the data
+for (var i = 0; i < data.length; i++) {
+	//if there is a value for longitude
+	if(Boolean(data[i].longitude)){
+		//if there exists in the color dictionary, a key matching the discipline (cinema, theatre, etc)
+		if (color_dict[data[i].discipline]){
+		//then use the value(color) for that discipele
+		circle_color = color_dict[data[i].discipline]}
+		//otherwise
+		else{
+			//create a new dictionary key,value pair where the key is the discipline and the value is a value from the color list
+			color_dict[data[i].discipline] = color_options[iter]
+			//add one to the index so it advances to the next color in the color list
+			iter++}
+  		//create a circle with lat, long and a radius which equals a value in the spreadsheet divided by 10
+			circle = new L.circle([data[i].latitude , data[i].longitude], data[i].cartodb_id/10, {
+            color: circle_color
+        })
+				//when you click on the circle, what pops up is the organization name from the spreadsheet
+				.bindPopup(data[i].organization_name)
+				.addTo(map);
+                }
+		}
+  }
+});
+
+
+</script>
+</script>
+</body>
+</html>
