@@ -46,7 +46,20 @@ var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/
 });
 map.addLayer(labelLayer);
 
+function style(feature) {
+	fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+  return {
+	// color: feature.properties.color,
+	color: "#FCB81E",
+    fillColor: fillColor,
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.7
+  };
+}
+
 var geo = L.geoJson({ features: [] }, {
+			style: style,
 			onEachFeature: function popUp(f, l) {
 				var out = [];
 				if (f.properties) {
@@ -70,6 +83,8 @@ var addGeoJSON = function () {
 	};
 
 }
+
+
 
 	</script>
 </body>
