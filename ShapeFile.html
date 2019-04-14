@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
 	<title>Shapefiles</title>
@@ -8,29 +9,33 @@
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/catiline/2.9.3/catiline.min.js"></script>
-<!-- <script src="leaflet.shpfile.js"></script> -->
+	<!-- <script src="leaflet.shpfile.js"></script> -->
 	<style type="text/css">
-	#map { 
-		height: 700px;
-		 }
+		#map {
+			height: 700px;
+		}
 	</style>
 </head>
-<body>
-<div id="map"/>
 
-<script type="text/javascript">
+<body>
+	<div>
+		<button onclick="addGeoJSON()">Click me</button>
+
+	</div>
+	<div id="map" />
+
+	<script type="text/javascript">
 
 
 var map = L.map('map').setView([40.7590, -73.9844], 12);
 
-		
+
 var baseLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg', {
 	minNativeZoom: 8,
 	maxNativeZoom: 19,
 	subdomains: '1234',
 	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
 });
-
 map.addLayer(baseLayer);
 
 var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/{x}/{y}.png8', {
@@ -39,24 +44,49 @@ var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/
 	subdomains: '1234',
 	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
 });
-
 map.addLayer(labelLayer);
 
-var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
-	var out = [];
-	if (f.properties){
-		for(var key in f.properties){
-		out.push(key+": "+f.properties[key]);
+function style(feature) {
+	fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+  return {
+	// color: feature.properties.color,
+	color: "#FCB81E",
+    fillColor: fillColor,
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.7
+  };
 }
-l.bindPopup(out.join("<br />"));
+
+var geo = L.geoJson({ features: [] }, {
+			style: style,
+			onEachFeature: function popUp(f, l) {
+				var out = [];
+				if (f.properties) {
+					for (var key in f.properties) {
+						out.push(key + ": " + f.properties[key]);
+					}
+					l.bindPopup(out.join("<br />"));
+				}
+			}
+		})
+
+var addGeoJSON = function () {
+	if (map.hasLayer(geo)) {
+		map.removeLayer(geo);
+	} else {
+		geo.addTo(map);
+		var base = 'ZIP_CODE_040114.zip';
+		shp(base).then(function (data) {
+			geo.addData(data);
+		});
+	};
+
 }
-}}).addTo(map);
-var base = 'ZIP_CODE_040114.zip';
-shp(base).then(function(data){
-geo.addData(data);
-});
 
 
-</script>
+
+	</script>
 </body>
+
 </html>
