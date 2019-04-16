@@ -58,7 +58,6 @@ L.control.layers(labelLayer, baseLayer).addTo(map);
 // Creating 1 layerGroup per year of organizations
 
 orgs05 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2005.csv', {
 	header: true,
@@ -72,9 +71,9 @@ Papa.parse('geocoded_orgs/2005.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'greenyellow'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs05.addLayer(circle);
 				} //end if
@@ -83,7 +82,6 @@ Papa.parse('geocoded_orgs/2005.csv', {
 	}); //end papa parse
 
 orgs06 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2006.csv', {
 	header: true,
@@ -97,9 +95,9 @@ Papa.parse('geocoded_orgs/2006.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'darkgoldenrod'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs06.addLayer(circle);
 				} //end if
@@ -108,7 +106,6 @@ Papa.parse('geocoded_orgs/2006.csv', {
 	}); //end papa parse
 
 orgs07 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2007.csv', {
 	header: true,
@@ -122,9 +119,9 @@ Papa.parse('geocoded_orgs/2007.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'lightsteelblue'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs07.addLayer(circle);
 				} //end if
@@ -133,7 +130,6 @@ Papa.parse('geocoded_orgs/2007.csv', {
 	}); //end papa parse
 
 orgs08 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2008.csv', {
 	header: true,
@@ -147,9 +143,9 @@ Papa.parse('geocoded_orgs/2008.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'red'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs08.addLayer(circle);
 				} //end if
@@ -158,7 +154,6 @@ Papa.parse('geocoded_orgs/2008.csv', {
 	}); //end papa parse
 
 orgs09 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2009.csv', {
 	header: true,
@@ -172,9 +167,9 @@ Papa.parse('geocoded_orgs/2009.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'black'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs09.addLayer(circle);
 				} //end if
@@ -183,7 +178,6 @@ Papa.parse('geocoded_orgs/2009.csv', {
 	}); //end papa parse
 
 orgs10 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2010.csv', {
 	header: true,
@@ -197,9 +191,9 @@ Papa.parse('geocoded_orgs/2010.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'ForestGreen'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs10.addLayer(circle);
 				} //end if
@@ -208,7 +202,6 @@ Papa.parse('geocoded_orgs/2010.csv', {
 	}); //end papa parse
 
 orgs11 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2011.csv', {
 	header: true,
@@ -222,9 +215,9 @@ Papa.parse('geocoded_orgs/2011.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'DeepPink'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs11.addLayer(circle);
 				} //end if
@@ -233,7 +226,6 @@ Papa.parse('geocoded_orgs/2011.csv', {
 	}); //end papa parse
 
 orgs12 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2012.csv', {
 	header: true,
@@ -247,9 +239,9 @@ Papa.parse('geocoded_orgs/2012.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'purple'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs12.addLayer(circle);
 				} //end if
@@ -258,7 +250,6 @@ Papa.parse('geocoded_orgs/2012.csv', {
 	}); //end papa parse
 
 orgs13 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2013.csv', {
 	header: true,
@@ -272,9 +263,9 @@ Papa.parse('geocoded_orgs/2013.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'orange'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs13.addLayer(circle);
 				} //end if
@@ -283,7 +274,6 @@ Papa.parse('geocoded_orgs/2013.csv', {
 	}); //end papa parse
 
 orgs14 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2014.csv', {
 	header: true,
@@ -297,9 +287,9 @@ Papa.parse('geocoded_orgs/2014.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'khaki'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs14.addLayer(circle);
 				} //end if
@@ -308,7 +298,6 @@ Papa.parse('geocoded_orgs/2014.csv', {
 	}); //end papa parse
 
 orgs15 = L.layerGroup();
-var data;
 
 Papa.parse('geocoded_orgs/2015.csv', {
 	header: true,
@@ -322,9 +311,9 @@ Papa.parse('geocoded_orgs/2015.csv', {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'blue'
 				})
-					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
-					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
-					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs15.addLayer(circle);
 				} //end if
@@ -333,7 +322,6 @@ Papa.parse('geocoded_orgs/2015.csv', {
 	}); //end papa parse
 
 
-//map.addLayer(orgs12);
 
 var add2005 = function() {
 	if (map.hasLayer(orgs05)) {
