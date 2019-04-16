@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Map</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/leaflet-0.7.2/leaflet.ajax.min.js"></script>
+	<!-- <script src="leaflet.shpfile.js"></script> -->
+    <style>
+    #map {height: 700px}
+    </style>
+</head>
+
+<div id="map"></div>
+
+<script type="text/javascript" >
+var map = L.map('map').setView([40.6990, -73.8844], 11);
+var baseLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/{x}/{y}.png8', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+map.addLayer(labelLayer);
+
+var geo = L.geoJson({ features: [] }, {
+			style: style,
+			onEachFeature: function popUp(f, l) {
+				var out = [];
+				if (f.properties) {
+					for (var key in f.properties) {
+						out.push(key + ": " + f.properties[key]);
+					}
+					l.bindPopup(out.join("<br />"));
+				}
+			}
+		})
+
+// to make color scales
+// colorbrewer2.org to find the color scheme
+
+function getColor(index) {
+    return index > (175 - 25) ? '#a50026':
+    index > (188 - 25 * 2) ? '#d73027':
+    index > (188 - 25 * 3) ? '#f46d43':
+    index > (188 - 25 * 4) ? '#fdae61':
+    index > (188 - 25 * 5) ? '#74add1':
+    index > (188 - 25 * 6) ? '#4575b4':
+    '#313695';
+}
+
+
+
+// created a new style function that styles by population
+function style(feature) {
+    return {
+	fillColor: getColor(feature.properties.rank),
+	weight: 1.2,
+	opacity: 1,
+	color: '#f1f1f1',
+	dashArray: '1   ',
+	fillOpacity: 0.7
+    };
+}
+
+$.getJSON("geojsons/zip_2015.geojson",function(data){
+    geo.addData(data);
+});
+geo.addTo(map)
+
+</script>
+</html>
