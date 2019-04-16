@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Informative Popups</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<style type="text/css">
+	#map { 
+		height: 700px;
+		 }
+	</style>
+</head>
+<body>
+	<div>
+		<button onclick="add2005()">View 2005</button>
+		<button onclick="add2006()">View 2006</button>
+		<button onclick="add2007()">View 2007</button>
+		<button onclick="add2008()">View 2008</button>
+		<button onclick="add2009()">View 2009</button>
+		<button onclick="add2010()">View 2010</button>
+		<button onclick="add2011()">View 2011</button>
+		<button onclick="add2012()">View 2012</button>
+		<button onclick="add2013()">View 2013</button>
+		<button onclick="add2014()">View 2014</button>
+		<button onclick="add2015()">View 2015</button>
+	</div>
+
+
+<div id="map"/>
+// Import leaflet
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript">
+
+
+var map = L.map('map').setView([40.7590, -73.9844], 12);
+
+		
+var baseLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+	
+L.control.layers(labelLayer, baseLayer).addTo(map);
+
+// Creating 1 layerGroup per year of organizations
+
+orgs05 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2005.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'greenyellow'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs05.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs06 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2006.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'darkgoldenrod'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs06.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs07 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2007.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'lightsteelblue'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs07.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs08 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2008.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'red'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs08.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs09 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2009.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'black'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs09.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs10 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2010.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'ForestGreen'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs10.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs11 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2011.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'DeepPink'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs11.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs12 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2012.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'purple'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs12.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs13 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2013.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'orange'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs13.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs14 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2014.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'khaki'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs14.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs15 = L.layerGroup();
+var data;
+
+Papa.parse('geocoded_orgs/2015.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'blue'
+				})
+					.bindPopup('Name: ' + data[i].TITLE_NAME + "<br>Subdiscipline: " + data[i].SUBDISCIPLINE 
+					+ "<br>Total Revenue: $" + data[i].REVENUE + "<br>Total Expenses: $" + data[i].EXPENSES 
+					+ "<br>Total Contributions: $" + data[i].CONTRIBUTIONS + "<br>Total Compensation: $" + data[i].COMPENSATION)
+
+					orgs15.addLayer(circle);
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+
+//map.addLayer(orgs12);
+
+var add2005 = function() {
+	if (map.hasLayer(orgs05)) {
+		map.removeLayer(orgs05);
+	} else {
+		map.addLayer(orgs05);
+	};
+}; //end add2005
+var add2006 = function() {
+	if (map.hasLayer(orgs06)) {
+		map.removeLayer(orgs06);
+	} else {
+		map.addLayer(orgs06);
+	};
+}; //end add2006
+var add2007 = function() {
+	if (map.hasLayer(orgs07)) {
+		map.removeLayer(orgs07);
+	} else {
+		map.addLayer(orgs07);
+	};
+}; //end add2007
+var add2008 = function() {
+	if (map.hasLayer(orgs08)) {
+		map.removeLayer(orgs08);
+	} else {
+		map.addLayer(orgs08);
+	};
+}; //end add2008
+var add2009 = function() {
+	if (map.hasLayer(orgs09)) {
+		map.removeLayer(orgs09);
+	} else {
+		map.addLayer(orgs09);
+	};
+}; //end add2009
+var add2010 = function() {
+	if (map.hasLayer(orgs10)) {
+		map.removeLayer(orgs10);
+	} else {
+		map.addLayer(orgs10);
+	};
+}; //end add2010
+var add2011 = function() {
+	if (map.hasLayer(orgs11)) {
+		map.removeLayer(orgs11);
+	} else {
+		map.addLayer(orgs11);
+	};
+}; //end add2011
+var add2012 = function() {
+	if (map.hasLayer(orgs12)) {
+		map.removeLayer(orgs12);
+	} else {
+		map.addLayer(orgs12);
+	};
+}; //end add2012
+var add2013 = function() {
+	if (map.hasLayer(orgs13)) {
+		map.removeLayer(orgs13);
+	} else {
+		map.addLayer(orgs13);
+	};
+}; //end add2014
+var add2014 = function() {
+	if (map.hasLayer(orgs14)) {
+		map.removeLayer(orgs14);
+	} else {
+		map.addLayer(orgs14);
+	};
+}; //end add2014
+var add2015 = function() {
+	if (map.hasLayer(orgs15)) {
+		map.removeLayer(orgs15);
+	} else {
+		map.addLayer(orgs15);
+	};
+}; //end add2015
+
+
+
+</script>
+
+</body>
+</html>
