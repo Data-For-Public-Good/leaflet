@@ -2,7 +2,7 @@
 title: "Leaflet in R"
 author: "Natalie O'Shea"
 date: "April 17, 2019"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
