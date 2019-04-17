@@ -34,18 +34,25 @@ var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/
 });
 map.addLayer(labelLayer);
 
+function getValue(key){
+	return key == 'population' ? f.properties[key]:
+	Math.round(f.properties[key] * f.properties.population);
+};
+
 var geo = L.geoJson({ features: [] }, {
 			style: style,
 			onEachFeature: function popUp(f, l) {
 				var out = [];
 				if (f.properties) {
 					for (var key in f.properties) {
-						out.push(key + ": " + f.properties[key]);
+						out.push(key + ": " + key == 'population' ? f.properties[key]:
+												Math.round(f.properties[key] * f.properties.population));
 					}
 					l.bindPopup(out.join("<br />"));
 				}
 			}
 		})
+
 
 // to make color scales
 // colorbrewer2.org to find the color scheme
