@@ -1,0 +1,63 @@
+---
+title: "Leaflet in R"
+author: "Natalie O'Shea"
+date: "April 17, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load packages
+
+```{r message=FALSE}
+library(jsonlite)
+library(dplyr)
+library(RCurl)
+library(leaflet)
+library(RColorBrewer)
+```
+
+### Download data
+
+Download JSON file from the NYC OpenData portal and save as a data frame.
+
+```{r}
+dcla <- fromJSON(getURL("https://data.cityofnewyork.us/resource/u35m-9t32.json")) %>% 
+  as.data.frame # convert to data frame
+```
+
+### Clean data
+
+Clean downloaded data by first converting latitude and longitude to the numeric data type and then filtering out rows with missing lat/long data.
+
+```{r}
+dcla <- dcla %>%
+  mutate_at(vars(latitude, longitude), list(as.numeric)) %>%  # convert lat/long columns to numeric
+  mutate_at(vars(discipline), list(as.factor)) %>%  # convert lat/long columns to numeric
+  filter(!is.na(latitude)) # filter out rows with NA for latitude
+
+# save relevant info
+info<-paste("<b>Discipline: </b>",dcla$discipline,"<br>",
+             "<b>Name: </b>",dcla$organization_name,"<br>",
+             "<b>Address: </b>",dcla$address,sep = "") 
+
+pal<-colorFactor(colorRampPalette(brewer.pal(name="Dark2", n = 8))(19),dcla$discipline) # color based on discipline
+
+```
+
+
+### Create Leaflet map
+
+Plot DCLA organizations using a basic Leaflet map.
+
+```{r}
+dcla_map <- leaflet(dcla) %>%
+  addTiles() %>%
+  addCircleMarkers(lng = ~longitude,lat = ~latitude,
+                   clusterOptions = markerClusterOptions(), # cluster markers
+                   popup = info, # display popup information for each marker
+                   col=pal(dcla$discipline)) # color markers based on discipline
+dcla_map
+```
