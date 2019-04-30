@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Culture in New York City</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+	<script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+	<style>
+        .leaflet-control-layers-toggle:after{ 
+            content:"Timeline (2005-2015)"; 
+            color:#e6550d ;
+            font-family: calibri;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .leaflet-control-layers-toggle{ 
+            width:auto;
+            background-position:3px 50% ;
+            padding:3px;
+            padding-left:36px;
+            text-decoration:none;
+            line-height:36px;
+            color:#2ca25f ;
+
+        }
+        button{
+            color:#e6550d ;
+            font-family: calibri;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #fee6ce
+        }
+        </style>
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/catiline/2.9.3/catiline.min.js"></script>
+<!-- <script src="leaflet.shpfile.js"></script> -->
+	<style type="text/css">
+	#map { 
+		height: 700px;
+		 }
+	</style>
+</head>
+<body>
+<div>
+	<button onclick="addGeoJSON()">Independent Artists</button>
+    <button onclick="addGeoJSON2()">Arts organizations</button>
+    <button onclick="addGeoJSON2()">Vibrancy Index</button>
+    <button onclick="addGeoJSON2()">Federal awards</button>
+    <button onclick="addGeoJSON2()">State awards</button>
+    <button onclick="addGeoJSON2()">Mass media mentions</button>
+    
+
+</div>
+<div id="map"/>
+
+<script type="text/javascript">
+
+
+var map = L.map('map').setView([40.7590, -73.9844], 11);
+	
+var baseLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://maps{s}.nyc.gov/xyz/1.0.0/carto/label/{z}/{x}/{y}.png8', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+map.addLayer(labelLayer);
+
+var geo_1 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_2 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_3 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_4 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_5 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_6 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_7 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_8 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_9 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_10 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var geo_11 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	var out = [];
+	if (f.properties){
+		for(var key in f.properties){
+		out.push(key+": "+f.properties[key]);
+}
+l.bindPopup(out.join("<br />"));
+}
+}});
+
+var addGeoJSON = function(){
+		var year_2005 = 'artists_2005.zip';
+		shp(year_2005).then(function(data_1){
+		geo_1.addData(data_1);
+		});
+		var year_2006 = 'artists_2006.zip';
+		shp(year_2006).then(function(data_2){
+		geo_2.addData(data_2);
+		});
+		var year_2007 = 'artists_2007.zip';
+		shp(year_2007).then(function(data_3){
+		geo_3.addData(data_3);
+		});
+		var year_2008 = 'artists_2008.zip';
+		shp(year_2008).then(function(data_4){
+		geo_4.addData(data_4);
+		});
+		var year_2009 = 'artists_2009.zip';
+		shp(year_2009).then(function(data_5){
+		geo_5.addData(data_5);
+		});
+		var year_2010 = 'artists_2010.zip';
+		shp(year_2010).then(function(data_6){
+		geo_6.addData(data_6);
+		});
+		var year_2011 = 'artists_2011.zip';
+		shp(year_2011).then(function(data_7){
+		geo_7.addData(data_7);
+		});
+		var year_2012 = 'artists_2012.zip';
+		shp(year_2012).then(function(data_8){
+		geo_8.addData(data_8);
+		});
+		var year_2013 = 'artists_2013.zip';
+		shp(year_2013).then(function(data_9){
+		geo_9.addData(data_9);
+		});
+		var year_2014 = 'artists_2014.zip';
+		shp(year_2014).then(function(data_10){
+		geo_10.addData(data_10);
+		});
+		var year_2015 = 'artists_2015.zip';
+		shp(year_2015).then(function(data_11){
+		geo_11.addData(data_11);
+		});
+	    
+	    var year_artists_2005 = L.layerGroup(year_2005);
+	    var year_artists_2006 = L.layerGroup(year_2006);
+	    var year_artists_2007 = L.layerGroup(year_2007);
+	    var year_artists_2008 = L.layerGroup(year_2008);
+	    var year_artists_2009 = L.layerGroup(year_2009);
+	    var year_artists_2010 = L.layerGroup(year_2010);
+	    var year_artists_2011 = L.layerGroup(year_2011);
+	    var year_artists_2012 = L.layerGroup(year_2012);
+	    var year_artists_2013 = L.layerGroup(year_2013);
+	    var year_artists_2014 = L.layerGroup(year_2014);
+	    var year_artists_2015 = L.layerGroup(year_2015);
+
+        var display = {
+            "2005": year_artists_2005,
+            "2006": year_artists_2006,
+            "2007": year_artists_2007,
+            "2008": year_artists_2008,
+            "2009": year_artists_2009,
+            "2010": year_artists_2010,
+            "2011": year_artists_2011,
+            "2012": year_artists_2012,
+            "2013": year_artists_2013,
+            "2014": year_artists_2014,
+            "2015": year_artists_2015
+        };
+
+        L.control.layers(null, display).addTo(map);
+}
+
+
+</script>
+</body>
+</html>
