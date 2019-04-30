@@ -19,7 +19,6 @@
 
 
 <div id="map"/>
-// Import leaflet
 <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 <script type="text/javascript">
 
@@ -48,15 +47,25 @@ var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net
 var geo = L.geoJson({ features: [] }, {
 			style: style,
 			onEachFeature: function popUp(f, l) {
+				//l.bindPopup(f.properties['zip'])
+				// doesn't work - says zip is undefined
 				var out = [];
+				var descriptors = ['zip', 'population', 'independent_artists', 'art_firms', 'arts_organizations', 'federal_dollars', 'state_dollars', 'rank']
 				if (f.properties) {
 					for (var key in f.properties) {
-						out.push(key + ": " + f.properties[key]);
-					}
+						if (descriptors.includes(key)){
+							var str = key
+							str.split('_')
+							.map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+							.join(' ')
+							out.push('<b>' + key.split('_').map(w => w[0].toUpperCase()+ w.substr(1).toLowerCase()).join(' ') + '</b>: ' + f.properties[key]);
+						} // end if key in descriptors
+					} // end loop over f.properties
 					l.bindPopup(out.join("<br />"));
-				}
-			}
-		})
+				//l.bindPopup(f.properties['zip'])
+				} //end if f.properties
+			} //end onEachFeature
+		}) //end geo
 
 
 // to make color scales
@@ -71,8 +80,6 @@ function getColor(index) {
     index > (188 - 25 * 6) ? '#4575b4':
     '#313695';
 }
-
-
 
 // created a new style function that styles by population
 function style(feature) {
@@ -104,15 +111,17 @@ Papa.parse('geocoded_orgs/2005.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
-				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
-					color: 'greenyellow'
-				})
-					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
-					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
-					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+					circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+						color: 'greenyellow'
+					})
+						.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+						+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+						+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
-					orgs05.addLayer(circle);
-				} //end if
+						orgs05.addLayer(circle);
+					} //end lat/long if
+				} //end boolean if
 			} //end loop over orgs
 		} //end function bracket
 	}); //end papa parse
@@ -128,6 +137,7 @@ Papa.parse('geocoded_orgs/2006.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'darkgoldenrod'
 				})
@@ -136,6 +146,7 @@ Papa.parse('geocoded_orgs/2006.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs06.addLayer(circle);
+				} //end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -152,6 +163,7 @@ Papa.parse('geocoded_orgs/2007.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'lightsteelblue'
 				})
@@ -160,6 +172,7 @@ Papa.parse('geocoded_orgs/2007.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs07.addLayer(circle);
+				}// end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -176,6 +189,7 @@ Papa.parse('geocoded_orgs/2008.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'red'
 				})
@@ -184,6 +198,7 @@ Papa.parse('geocoded_orgs/2008.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs08.addLayer(circle);
+				} //end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -200,6 +215,7 @@ Papa.parse('geocoded_orgs/2009.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'yellow'
 				})
@@ -208,6 +224,7 @@ Papa.parse('geocoded_orgs/2009.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs09.addLayer(circle);
+				}//end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -224,6 +241,7 @@ Papa.parse('geocoded_orgs/2010.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'ForestGreen'
 				})
@@ -232,6 +250,7 @@ Papa.parse('geocoded_orgs/2010.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs10.addLayer(circle);
+				}//end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -248,6 +267,7 @@ Papa.parse('geocoded_orgs/2011.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'DeepPink'
 				})
@@ -256,6 +276,7 @@ Papa.parse('geocoded_orgs/2011.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs11.addLayer(circle);
+				} //end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -272,6 +293,7 @@ Papa.parse('geocoded_orgs/2012.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'purple'
 				})
@@ -280,6 +302,7 @@ Papa.parse('geocoded_orgs/2012.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs12.addLayer(circle);
+				} //end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -296,6 +319,7 @@ Papa.parse('geocoded_orgs/2013.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'orange'
 				})
@@ -304,6 +328,7 @@ Papa.parse('geocoded_orgs/2013.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs13.addLayer(circle);
+				}//end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -320,6 +345,7 @@ Papa.parse('geocoded_orgs/2014.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'khaki'
 				})
@@ -328,6 +354,7 @@ Papa.parse('geocoded_orgs/2014.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs14.addLayer(circle);
+				}//end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
@@ -344,6 +371,7 @@ Papa.parse('geocoded_orgs/2015.csv', {
 
 		for (var i = 0; i < data.length; i++) {
 			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
 				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
 					color: 'blue'
 				})
@@ -352,6 +380,7 @@ Papa.parse('geocoded_orgs/2015.csv', {
 					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
 
 					orgs15.addLayer(circle);
+				} //end lat long if
 				} //end if
 			} //end loop over orgs
 		} //end function bracket
