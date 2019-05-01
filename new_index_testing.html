@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Informative Popups</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style type="text/css">
+	#map { 
+		height: 675px;
+		width: 75%;
+		margin: auto;
+		 }
+	</style>
+</head>
+<body>
+
+
+<div id="map"/>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript">
+
+
+var map = L.map('map').setView([40.7400, -73.9844], 10);
+
+		
+var baseLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+	
+
+
+var geo = L.geoJson({ features: [] }, {
+			style: style,
+			onEachFeature: function popUp(f, l) {
+				//l.bindPopup(f.properties['zip'])
+				// doesn't work - says zip is undefined
+				var out = [];
+				var descriptors = ['zip', 'population', 'independent_artists', 'art_firms', 'arts_organizations', 'federal_dollars', 'state_dollars', 'rank']
+				if (f.properties) {
+					for (var key in f.properties) {
+						if (descriptors.includes(key)){
+							var str = key
+							str.split('_')
+							.map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+							.join(' ')
+							out.push('<b>' + key.split('_').map(w => w[0].toUpperCase()+ w.substr(1).toLowerCase()).join(' ') + '</b>: ' + f.properties[key]);
+						} // end if key in descriptors
+					} // end loop over f.properties
+					l.bindPopup(out.join("<br />"));
+				//l.bindPopup(f.properties['zip'])
+				} //end if f.properties
+			} //end onEachFeature
+		}) //end geo
+
+
+// to make color scales
+// colorbrewer2.org to find the color scheme
+
+var maxValues = {}
+function buildMax(data) {
+	for (var property_name in data.features[0].properties){
+		tempPropertyArray = []
+		for (feature_name in data.features) {
+			tempPropertyArray.push(data.features[feature_name].properties[property_name])
+		}
+		maxValues[property_name] = Math.max.apply(null, tempPropertyArray)
+	}
+}
+
+
+function getColor(input_value, feature_name) {
+	max_value = maxValues[feature_name]
+    return input_value > (max_value - max_value / 5 * 1) ? '#006d2c':
+    input_value > (max_value - max_value / 5 * 2) ? '#2ca25f':
+    input_value > (max_value - max_value / 5 * 3) ? '#66c2a4':
+    input_value > (max_value - max_value / 5 * 4) ? '#99d8c9':
+    '#ccece6';
+}
+
+// created a new style function that styles by population
+function style(feature) {
+    return {
+	fillColor: getColor(feature.properties.independent_artists, 'independent_artists'),
+	weight: 1.2,
+	opacity: 1,
+	color: '#f1f1f1',
+	dashArray: '1   ',
+	fillOpacity: 0.7
+    };
+}
+
+$.getJSON("geojsons/zip_2015.geojson",function(data){
+
+	buildMax(data)
+    geo.addData(data);
+});
+geo.addTo(map)
+
+// Creating 1 layerGroup per year of organizations
+
+orgs05 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2005.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+					circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+						color: 'greenyellow'
+					})
+						.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+						+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+						+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+						orgs05.addLayer(circle);
+					} //end lat/long if
+				} //end boolean if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs06 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2006.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'darkgoldenrod'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs06.addLayer(circle);
+				} //end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs07 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2007.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'lightsteelblue'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs07.addLayer(circle);
+				}// end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs08 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2008.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'red'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs08.addLayer(circle);
+				} //end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs09 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2009.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'yellow'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs09.addLayer(circle);
+				}//end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs10 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2010.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'ForestGreen'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs10.addLayer(circle);
+				}//end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs11 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2011.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'DeepPink'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs11.addLayer(circle);
+				} //end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs12 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2012.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'purple'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs12.addLayer(circle);
+				} //end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs13 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2013.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'orange'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs13.addLayer(circle);
+				}//end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs14 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2014.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'khaki'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs14.addLayer(circle);
+				}//end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+orgs15 = L.layerGroup();
+
+Papa.parse('geocoded_orgs/2015.csv', {
+	header: true,
+	download: true,
+	dynamicTyping: true,
+	complete: function(results) {
+		data = results.data;
+
+		for (var i = 0; i < data.length; i++) {
+			if(Boolean(data[i].LONG)){
+				if(data[i].LAT < 40.9 && data[i].LAT > 40.53 && data[i].LONG > -74.2346 && data[i].LONG < -73.75) {
+				circle = new L.circle([data[i].LAT, data[i].LONG], 10, {
+					color: 'blue'
+				})
+					.bindPopup('<b>Name: </b>' + data[i].TITLE_NAME + "<br><b>Subdiscipline: </b>" + data[i].SUBDISCIPLINE 
+					+ "<br><b>Total Revenue: </b>$" + parseInt(data[i].REVENUE, 10).toLocaleString() + "<br><b>Total Expenses: </b>$" + parseInt(data[i].EXPENSES, 10).toLocaleString() 
+					+ "<br><b>Total Contributions: </b>$" + parseInt(data[i].CONTRIBUTIONS, 10).toLocaleString() + "<br><b>Total Compensation: </b>$" + parseInt(data[i].COMPENSATION, 10).toLocaleString())
+
+					orgs15.addLayer(circle);
+				} //end lat long if
+				} //end if
+			} //end loop over orgs
+		} //end function bracket
+	}); //end papa parse
+
+	var overlayMaps = {
+		"2005": orgs05,
+		"2006": orgs06,
+		"2007": orgs07,
+		"2008": orgs08,
+		"2009": orgs09,
+		"2010": orgs10,
+		"2011": orgs11,
+		"2012": orgs12,
+		"2013": orgs13,
+		"2014": orgs14,
+		"2015": orgs15
+	};
+	
+L.control.layers(overlayMaps).addTo(map);
+
+
+
+
+</script>
+
+</body>
+</html>
