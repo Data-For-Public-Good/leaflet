@@ -17,6 +17,10 @@
 </head>
 <body>
 
+<div>
+	<button onclick = "add_vibrancy()">View Vibrancy</button>
+	<button onclick = "add_rank()">View Vibrancy Rank</button>
+</div>
 
 <div id="map"/>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
@@ -44,8 +48,8 @@ var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net
 	
 
 
-var geo = L.geoJson({ features: [] }, {
-			style: style,
+var geo = return L.geoJson({ features: [] }, {
+			style: style(feature_name),
 			onEachFeature: function popUp(f, l) {
 				//l.bindPopup(f.properties['zip'])
 				// doesn't work - says zip is undefined
@@ -93,9 +97,9 @@ function getColor(input_value, feature_name) {
 }
 
 // created a new style function that styles by population
-function style(feature) {
+function style(feature_name) {
     return {
-	fillColor: getColor(feature.properties.independent_artists, 'independent_artists'),
+	fillColor: getColor(feature.properties.independent_artists_raw, 'independent_artists_raw'),
 	weight: 1.2,
 	opacity: 1,
 	color: '#f1f1f1',
@@ -103,11 +107,16 @@ function style(feature) {
 	fillOpacity: 0.7
     };
 }
+function add_vibrancy() {
+
+}
+
+
 
 $.getJSON("geojsons/zip_2015.geojson",function(data){
 
 	buildMax(data)
-    geo.addData(data);
+    geo(feature_name).addData(data);
 });
 geo.addTo(map)
 
@@ -139,6 +148,8 @@ Papa.parse('geocoded_orgs/2005.csv', {
 		} //end function bracket
 	}); //end papa parse
 
+orgs05.addLayer(geo)
+
 orgs06 = L.layerGroup();
 
 Papa.parse('geocoded_orgs/2006.csv', {
@@ -164,6 +175,7 @@ Papa.parse('geocoded_orgs/2006.csv', {
 			} //end loop over orgs
 		} //end function bracket
 	}); //end papa parse
+orgs06.addLayer(geo)
 
 orgs07 = L.layerGroup();
 
@@ -191,6 +203,7 @@ Papa.parse('geocoded_orgs/2007.csv', {
 		} //end function bracket
 	}); //end papa parse
 
+orgs07.addLayer(geo)
 orgs08 = L.layerGroup();
 
 Papa.parse('geocoded_orgs/2008.csv', {

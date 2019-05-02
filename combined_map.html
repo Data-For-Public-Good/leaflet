@@ -44,7 +44,7 @@ var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net
 
 
 var geo = L.geoJson({ features: [] }, {
-			style: style,
+			style: style('feature_name'),
 			onEachFeature: function popUp(f, l) {
 				var out = [];
 				if (f.properties) {
@@ -73,7 +73,8 @@ function getColor(index) {
 
 
 // created a new style function that styles by population
-function style(feature) {
+function style(feature_name) {
+	alert(feature_name.toSource())
     return {
 	fillColor: getColor(feature.properties.rank),
 	weight: 1.2,
