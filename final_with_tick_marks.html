@@ -72,12 +72,12 @@
 		<option value="pca_arts_providers">Arts Providers Aggregated (PCA)</option>
 		<option value="pca_government_support">Government Support Aggregated (PCA)</option>
 	</select>
-	<label>Select Year: </label>
-
-	<!--<output>2005</output>-->
-	<input type="range" id="value" value="2005" min="2005" max="2015" step="1" oninput="change_layer(change_feature_name_to = current_year_feature['feature_name'], change_year_to = this.value),outputUpdate(value)">
+	
+	<label>Select Year (2005-2015): </label>	
+    <input type="range" id="value" value="2005" min="2005" max="2015" step="1" oninput="change_layer(change_feature_name_to = current_year_feature['feature_name'], change_year_to = this.value),outputUpdate(value)">
     <!--<input type="range"  step="1" min="2005" max="2015" oninput=>-->
 	<output for=year id="output">2005</output>
+
 
 	<!-- I tried to add tick marks to the year selector but it didn't work, this is the leftover code that I wanted to leave here,
 	apparently this is something that's different between firefox and chrome, I'm on firefox so maybe someone with chrome could try it
