@@ -9,8 +9,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<style type="text/css">
 	#map { 
-		height: 675px;
-		width: 75%;
+		height: 600px;
+		width: 45%;
 		margin: auto;
 		 }
 
@@ -31,7 +31,86 @@
 		color:#2ca25f ;
 
         }
-    
+
+	.info {
+    	padding: 6px 8px;
+    	font: 14px/16px Arial, Helvetica, sans-serif;
+    	background: white;
+    	background: rgba(255,255,255,0.8);
+    	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    	border-radius: 5px;
+    	text-align: left;
+    	font-family: arial;
+
+	}
+	.info h4 {
+    	margin: 0 0 5px;
+    	color: #777;
+    	text-align: left;
+    	font-family: arial;
+	}
+
+	.legend {
+    	line-height: 18px;
+    	color: #555;
+	}
+	.legend i {
+    	width: 18px;
+    	height: 18px;
+    	float: left;
+    	margin-right: 8px;
+    	opacity: 0.7;
+    	background: white;
+	}
+
+	form {
+   		margin-top: 10px;​
+    	text-align: center;​
+  ​
+	}​
+​
+	input {​
+    	color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 15px;
+		font-weight: bold;
+	}​
+​
+	output {​
+    	color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 20px;
+		font-weight: bold;
+	}  
+	
+	label {
+		color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 15px;
+		font-weight: bold;
+		position: right;
+	}
+
+	option {
+		color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 15px;
+		font-weight: bold;
+	}
+
+	select {
+		color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 15px;
+		font-weight: bold;
+	}
+	div {
+		color:#dd1c77 ;
+		font-family: century schoolbook;
+		font-size: 18px;
+		font-weight: normal;
+	}
+	
 	</style>
 </head>
 <body>
@@ -148,11 +227,11 @@ var maxValueDict = {"2005": {"zip": 11694, "year": 2005, "independent_artists": 
 
 function getColor(input_value, feature_name = current_year_feature['feature_name'], year = current_year_feature['year']) {
 	max_value = maxValueDict[year][feature_name]
-	return input_value > (max_value - max_value / 5 * 1) ? '#006d2c':
-	input_value > (max_value - max_value / 5 * 2) ? '#2ca25f':
-	input_value > (max_value - max_value / 5 * 3) ? '#66c2a4':
-	input_value > (max_value - max_value / 5 * 4) ? '#99d8c9':
-	'#ccece6';
+	return input_value > (max_value - max_value / 5 * 1) ? '#980043':
+	input_value > (max_value - max_value / 5 * 2) ? '#dd1c77':
+	input_value > (max_value - max_value / 5 * 3) ? '#df65b0':
+	input_value > (max_value - max_value / 5 * 4) ? '#d7b5d8':
+	'#f1eef6';
 }
 
 // this function gets called by L.geojson layer and returns the styling choices, including calling getcolor to return fill color
@@ -161,8 +240,8 @@ function style(feature) {
 	fillColor: getColor(input_value = feature.properties[current_year_feature['feature_name']]),
 	weight: 1.2,
 	opacity: 1,
-	color: '#f1f1f1',
-	dashArray: '1   ',
+	color: '#980043',
+	dashArray: '1',
 	fillOpacity: 0.7
     };
 }
@@ -211,6 +290,46 @@ function change_layer(change_feature_name_to = current_year_feature['feature_nam
 
 // initialize the map
 change_layer()
+
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>Culture in New York City</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+        : 'Click on a zipcode for more information');
+};
+
+info.addTo(map);
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 10, 20, 50, 100],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(map);
+
+
+
 </script>
 </body>
 </html>
