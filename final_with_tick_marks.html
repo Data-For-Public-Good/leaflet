@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Data for the Public Good</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+
+	<script src="https://unpkg.com/papaparse@4.6.3/papaparse.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style type="text/css">
+	#map { 
+		height: 675px;
+		width: 75%;
+		margin: auto;
+		 }
+
+	.leaflet-control-layers-toggle:after{ 
+		content:"Timeline (2005-2015)"; 
+		color:#e6550d ;
+		font-family: calibri;
+		font-size: 15px;
+		font-weight: bold;
+	}
+	.leaflet-control-layers-toggle{ 
+		width:auto;
+		background-position:3px 50% ;
+		padding:3px;
+		padding-left:36px;
+		text-decoration:none;
+		line-height:36px;
+		color:#2ca25f ;
+
+        }
+    
+	</style>
+</head>
+<body>
+
+<div>
+	<label>Select Variable to View:</label>
+	<!-- there's probably a way to iteratively generate these but oh well-->
+	<select name='Select Variable to View' onchange = change_layer(change_feature_name_to=this.value)> 
+		<option value="vibrancy">Art Vibrancy (using pca)</option>
+		<option value="fa_vibrancy">Art Vibrancy (using factor analysis)</option>
+		<option value="rank">Art Vibrancy by Rank</option>
+		<option value="independent_artists">Independent Artists, Scaled</option>
+		<option value="independent_artists_raw">Independent Artists, Raw</option>
+		<option value="total_revenue">Total Revenue, Scaled</option>
+		<option value="total_revenue_raw">Total Revenue, Raw</option>
+		<option value="total_revenue">Total Revenue, Scaled</option>
+		<option value="total_revenue_raw">Total Revenue, Raw</option>
+		<option value="art_firms">Art Firms, Scaled</option>
+		<option value="art_firms_raw">Art Firms, Raw</option>
+		<option value="arts_organizations">Art Organizations, Scaled</option>
+		<option value="arts_organizations_raw">Art Organizations, Raw</option>
+		<option value="total_compensation">Total Compensation, Scaled</option>
+		<option value="total_compensation_raw">Total Compensation, Raw</option>
+		<option value="total_expenses">Total Expenses, Scaled</option>
+		<option value="total_expenses_raw">Total Expenses, Raw</option>
+		<option value="contributed_revenue">Contributed Revenue, Scaled</option>
+		<option value="contributed_revenue_raw">Contributed Revenue, Raw</option>
+		<option value="federal_awards">Federal Awards, Scaled</option>
+		<option value="federal_awards_raw">Federal Awards, Raw</option>
+		<option value="federal_dollars">Federal Dollars, Scaled</option>
+		<option value="federal_dollars_raw">Federal Dollars, Raw</option>
+		<option value="state_awards">State Awards, Scaled</option>
+		<option value="state_awards_raw">State Awards, Raw</option>
+		<option value="state_dollars">State Dollars, Scaled</option>
+		<option value="state_dollars_raw">State Dollars, Raw</option>
+		<option value="population">Population</option>
+		<option value="pca_arts_dollars">Arts Dollars Aggregated (PCA)</option>
+		<option value="pca_arts_providers">Arts Providers Aggregated (PCA)</option>
+		<option value="pca_government_support">Government Support Aggregated (PCA)</option>
+	</select>
+	<label>Select Year: </label>
+
+	<!--<output>2005</output>-->
+	<input type="range" id="value" value="2005" min="2005" max="2015" step="1" oninput="change_layer(change_feature_name_to = current_year_feature['feature_name'], change_year_to = this.value),outputUpdate(value)">
+    <!--<input type="range"  step="1" min="2005" max="2015" oninput=>-->
+	<output for=year id="output">2005</output>
+
+	<!-- I tried to add tick marks to the year selector but it didn't work, this is the leftover code that I wanted to leave here,
+	apparently this is something that's different between firefox and chrome, I'm on firefox so maybe someone with chrome could try it
+	<datalist id="steplist">
+			<option>2005</option>
+			<option>2006</option>
+			<option>2007</option>
+			<option>2008</option>
+			<option>2009</option>
+			<option>2010</option>
+			<option>2011</option>
+			<option>2012</option>
+			<option>2013</option>
+			<option>2014</option>
+			<option>2015</option>
+	</datalist>-->
+</div>
+
+<div id="map"></div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript">
+
+/* The basic flow of the script is that the html input above calls the change_layer function when the user interacts with it.
+The change layer function changes two global variables, current_year_feature[year] and current_year_feature[feature]
+I'm assuming using global variables in this way is generally bad practice, my worry is that some parts of the script 
+will run before the globals are updated, but here we are, it was the only idea I had. */
+
+function outputUpdate(num) {
+document.querySelector('#output').value = num;
+}
+
+
+
+var map = L.map('map').setView([40.7400, -73.9844], 10);
+
+var baseLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([39.3682, -75.9374], [42.0329, -71.7187])
+});
+
+map.addLayer(baseLayer);
+
+var labelLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png', {
+	minNativeZoom: 8,
+	maxNativeZoom: 19,
+	subdomains: '1234',
+	bounds: L.latLngBounds([40.0341, -74.2727], [41.2919, -71.9101])
+});
+
+/* ok, so, I know this is really really bad...
+
+maxValueDict is a dictionary with the maximum value for each year in each column, we need the maximum value to get the color 
+of a zipcode in the getColor function.  It's possible we could rewrite it to not need the maxValue, but I don't know how.
+
+I tried for like 3 hours to get javascript to generate this dictionary and couldn't get it to work
+I think the basic problem was sync issues with $.getJSON, which I was using to read the files and calculate the max values
+
+I then generated the dictionary in python -- which took like 2 minutes :'''( -- and saved it to a json file to load it in to the javascript
+But then I had the same problems with sync, I wasn't able to load the dictionary into javascript like I wanted
+
+So in the end I just copied it from the python output and pasted it here, I'm not proud.
+Until we find a better way we'll have to re-copy&paste each time we update the geojson files.
+*/
+var maxValueDict = {"2005": {"zip": 11694, "year": 2005, "independent_artists": 7, "art_firms": 6, "arts_organizations": 2, "total_revenue": 7, "total_compensation": 9, "total_expenses": 7, "contributed_revenue": 6, "federal_awards": 5, "federal_dollars": 12, "state_awards": 4, "state_dollars": 6, "population": 109931, "total_nonprofits": 1125, "pca_arts_providers": 6, "pca_arts_dollars": 15, "pca_government_support": 8, "vibrancy": 9, "independent_artists_raw": 130, "art_firms_raw": 11179, "arts_organizations_raw": 93, "total_revenue_raw": 637769170, "total_compensation_raw": 282060520, "total_expenses_raw": 587035758, "contributed_revenue_raw": 372562450, "federal_awards_raw": 36, "federal_dollars_raw": 2407986, "state_awards_raw": 278, "state_dollars_raw": 6134240, "fa_vibrancy": 1, "rank": 163}, "2006": {"zip": 11694, "year": 2006, "independent_artists": 8, "art_firms": 6, "arts_organizations": 3, "total_revenue": 7, "total_compensation": 9, "total_expenses": 8, "contributed_revenue": 7, "federal_awards": 5, "federal_dollars": 11, "state_awards": 4, "state_dollars": 7, "population": 109931, "total_nonprofits": 1089, "pca_arts_providers": 6, "pca_arts_dollars": 14, "pca_government_support": 9, "vibrancy": 8, "independent_artists_raw": 135, "art_firms_raw": 11643, "arts_organizations_raw": 98, "total_revenue_raw": 763124566, "total_compensation_raw": 303845469, "total_expenses_raw": 653273620, "contributed_revenue_raw": 354642664, "federal_awards_raw": 31, "federal_dollars_raw": 1965987, "state_awards_raw": 248, "state_dollars_raw": 5459860, "fa_vibrancy": 2, "rank": 168}, "2007": {"zip": 11694, "year": 2007, "independent_artists": 8, "art_firms": 5, "arts_organizations": 3, "total_revenue": 8, "total_compensation": 9, "total_expenses": 8, "contributed_revenue": 7, "federal_awards": 5, "federal_dollars": 4, "state_awards": 5, "state_dollars": 6, "population": 109931, "total_nonprofits": 1096, "pca_arts_providers": 5, "pca_arts_dollars": 15, "pca_government_support": 6, "vibrancy": 9, "independent_artists_raw": 185, "art_firms_raw": 11187, "arts_organizations_raw": 102, "total_revenue_raw": 835564883, "total_compensation_raw": 320112706, "total_expenses_raw": 709738979, "contributed_revenue_raw": 421290548, "federal_awards_raw": 31, "federal_dollars_raw": 1567431, "state_awards_raw": 234, "state_dollars_raw": 5752486, "fa_vibrancy": 2, "rank": 166}, "2008": {"zip": 11694, "year": 2008, "independent_artists": 8, "art_firms": 5, "arts_organizations": 4, "total_revenue": 8, "total_compensation": 9, "total_expenses": 8, "contributed_revenue": 7, "federal_awards": 4, "federal_dollars": 12, "state_awards": 4, "state_dollars": 7, "population": 109931, "total_nonprofits": 1097, "pca_arts_providers": 5, "pca_arts_dollars": 16, "pca_government_support": 6, "vibrancy": 9, "independent_artists_raw": 203, "art_firms_raw": 10055, "arts_organizations_raw": 106, "total_revenue_raw": 865443903, "total_compensation_raw": 332913251, "total_expenses_raw": 793328268, "contributed_revenue_raw": 418696974, "federal_awards_raw": 36, "federal_dollars_raw": 2165710, "state_awards_raw": 280, "state_dollars_raw": 7120010, "fa_vibrancy": 2, "rank": 165}, "2009": {"zip": 11694, "year": 2009, "independent_artists": 9, "art_firms": 5, "arts_organizations": 4, "total_revenue": 9, "total_compensation": 9, "total_expenses": 9, "contributed_revenue": 8, "federal_awards": 3, "federal_dollars": 7, "state_awards": 3, "state_dollars": 7, "population": 109931, "total_nonprofits": 1063, "pca_arts_providers": 5, "pca_arts_dollars": 18, "pca_government_support": 7, "vibrancy": 10, "independent_artists_raw": 198, "art_firms_raw": 9592, "arts_organizations_raw": 100, "total_revenue_raw": 876708491, "total_compensation_raw": 335572935, "total_expenses_raw": 893707404, "contributed_revenue_raw": 519622045, "federal_awards_raw": 48, "federal_dollars_raw": 3151352, "state_awards_raw": 196, "state_dollars_raw": 6616576, "fa_vibrancy": 2, "rank": 168}, "2010": {"zip": 11694, "year": 2010, "independent_artists": 9, "art_firms": 6, "arts_organizations": 3, "total_revenue": 8, "total_compensation": 9, "total_expenses": 9, "contributed_revenue": 7, "federal_awards": 4, "federal_dollars": 7, "state_awards": 4, "state_dollars": 7, "population": 109931, "total_nonprofits": 1004, "pca_arts_providers": 6, "pca_arts_dollars": 17, "pca_government_support": 6, "vibrancy": 9, "independent_artists_raw": 215, "art_firms_raw": 9989, "arts_organizations_raw": 107, "total_revenue_raw": 822526785, "total_compensation_raw": 339794750, "total_expenses_raw": 865474784, "contributed_revenue_raw": 430148358, "federal_awards_raw": 34, "federal_dollars_raw": 2070000, "state_awards_raw": 224, "state_dollars_raw": 4647840, "fa_vibrancy": 2, "rank": 169}, "2011": {"zip": 11694, "year": 2011, "independent_artists": 9, "art_firms": 6, "arts_organizations": 3, "total_revenue": 7, "total_compensation": 9, "total_expenses": 8, "contributed_revenue": 6, "federal_awards": 4, "federal_dollars": 9, "state_awards": 4, "state_dollars": 7, "population": 109931, "total_nonprofits": 1061, "pca_arts_providers": 6, "pca_arts_dollars": 15, "pca_government_support": 7, "vibrancy": 9, "independent_artists_raw": 219, "art_firms_raw": 9876, "arts_organizations_raw": 116, "total_revenue_raw": 813812807, "total_compensation_raw": 335752978, "total_expenses_raw": 785823203, "contributed_revenue_raw": 394459318, "federal_awards_raw": 32, "federal_dollars_raw": 1645000, "state_awards_raw": 204, "state_dollars_raw": 3961840, "fa_vibrancy": 2, "rank": 167}, "2012": {"zip": 11694, "year": 2012, "independent_artists": 9, "art_firms": 6, "arts_organizations": 3, "total_revenue": 7, "total_compensation": 8, "total_expenses": 7, "contributed_revenue": 6, "federal_awards": 5, "federal_dollars": 6, "state_awards": 4, "state_dollars": 6, "population": 109931, "total_nonprofits": 1035, "pca_arts_providers": 6, "pca_arts_dollars": 14, "pca_government_support": 8, "vibrancy": 8, "independent_artists_raw": 250, "art_firms_raw": 9439, "arts_organizations_raw": 109, "total_revenue_raw": 745736226, "total_compensation_raw": 340044681, "total_expenses_raw": 780904179, "contributed_revenue_raw": 306932447, "federal_awards_raw": 34, "federal_dollars_raw": 1298000, "state_awards_raw": 212, "state_dollars_raw": 3914580, "fa_vibrancy": 2, "rank": 167}, "2013": {"zip": 11694, "year": 2013, "independent_artists": 8, "art_firms": 6, "arts_organizations": 2, "total_revenue": 9, "total_compensation": 8, "total_expenses": 7, "contributed_revenue": 8, "federal_awards": 5, "federal_dollars": 5, "state_awards": 4, "state_dollars": 6, "population": 109931, "total_nonprofits": 1042, "pca_arts_providers": 6, "pca_arts_dollars": 15, "pca_government_support": 7, "vibrancy": 7, "independent_artists_raw": 271, "art_firms_raw": 9627, "arts_organizations_raw": 111, "total_revenue_raw": 754344669, "total_compensation_raw": 350875655, "total_expenses_raw": 792728621, "contributed_revenue_raw": 321010692, "federal_awards_raw": 36, "federal_dollars_raw": 1762762, "state_awards_raw": 202, "state_dollars_raw": 3931680, "fa_vibrancy": 2, "rank": 169}, "2014": {"zip": 11694, "year": 2014, "independent_artists": 9, "art_firms": 6, "arts_organizations": 3, "total_revenue": 9, "total_compensation": 8, "total_expenses": 9, "contributed_revenue": 8, "federal_awards": 4, "federal_dollars": 4, "state_awards": 5, "state_dollars": 7, "population": 109931, "total_nonprofits": 1049, "pca_arts_providers": 6, "pca_arts_dollars": 16, "pca_government_support": 8, "vibrancy": 8, "independent_artists_raw": 294, "art_firms_raw": 10021, "arts_organizations_raw": 123, "total_revenue_raw": 780803237, "total_compensation_raw": 352453930, "total_expenses_raw": 775098718, "contributed_revenue_raw": 362056219, "federal_awards_raw": 41, "federal_dollars_raw": 1630769, "state_awards_raw": 34, "state_dollars_raw": 871632, "fa_vibrancy": 2, "rank": 170}, "2015": {"zip": 11697, "year": 2015, "independent_artists": 9, "art_firms": 6, "arts_organizations": 3, "total_revenue": 8, "total_compensation": 8, "total_expenses": 7, "contributed_revenue": 8, "federal_awards": 4, "federal_dollars": 8, "state_awards": 4, "state_dollars": 4, "population": 109931, "total_nonprofits": 1064, "pca_arts_providers": 6, "pca_arts_dollars": 15, "pca_government_support": 8, "vibrancy": 7, "independent_artists_raw": 314, "art_firms_raw": 11060, "arts_organizations_raw": 116, "total_revenue_raw": 944887157, "total_compensation_raw": 359202794, "total_expenses_raw": 820543845, "contributed_revenue_raw": 443172549, "federal_awards_raw": 33, "federal_dollars_raw": 2588268, "state_awards_raw": 174, "state_dollars_raw": 3891090, "fa_vibrancy": 2, "rank": 171}}
+// this function takes in a value and returns the color that the zip with that value should have, gets called by the L.geojson layer
+
+function getColor(input_value, feature_name = current_year_feature['feature_name'], year = current_year_feature['year']) {
+	max_value = maxValueDict[year][feature_name]
+	return input_value > (max_value - max_value / 5 * 1) ? '#006d2c':
+	input_value > (max_value - max_value / 5 * 2) ? '#2ca25f':
+	input_value > (max_value - max_value / 5 * 3) ? '#66c2a4':
+	input_value > (max_value - max_value / 5 * 4) ? '#99d8c9':
+	'#ccece6';
+}
+
+// this function gets called by L.geojson layer and returns the styling choices, including calling getcolor to return fill color
+function style(feature) {
+    return {
+	fillColor: getColor(input_value = feature.properties[current_year_feature['feature_name']]),
+	weight: 1.2,
+	opacity: 1,
+	color: '#f1f1f1',
+	dashArray: '1   ',
+	fillOpacity: 0.7
+    };
+}
+
+// this function generates a layer based on the current year and current feature
+function make_layer(year = current_year_feature['year']) {
+	filename = "geojsons/zip_" + year.toString() + ".geojson"
+	geo = L.geoJson({ features: [] }, {
+			style: style,
+			onEachFeature: function popUp(f, l) {
+				//l.bindPopup(f.properties['zip'])
+				// doesn't work - says zip is undefined
+				var out = [];
+				var descriptors = ['zip', 'population', 'independent_artists', 'art_firms', 'arts_organizations', 'federal_dollars', 'state_dollars', 'rank']
+				if (f.properties) {
+					for (var key in f.properties) {
+						if (descriptors.includes(key)){
+							var str = key
+							str.split('_')
+							.map(w => w[0].toUpperCase() + w.substr(1).toLowerCase())
+							.join(' ')
+							out.push('<b>' + key.split('_').map(w => w[0].toUpperCase()+ w.substr(1).toLowerCase()).join(' ') + '</b>: ' + f.properties[key]);
+						} // end if key in descriptors
+					} // end loop over f.properties
+					l.bindPopup(out.join("<br />"));
+				//l.bindPopup(f.properties['zip'])
+				} //end if f.properties
+			} //end onEachFeature
+		}) //end geo
+	map.removeLayer(geo)
+	$.getJSON(filename, function(data){
+		geo.addData(data).addTo(map);
+	});
+}
+
+// initialize current year and current feature to vibrancy and 2015
+var current_year_feature = {'feature_name':'vibrancy', 'year':2015 };
+
+// called by the input functions at the top whenever the user changes year or feature, note the default values
+function change_layer(change_feature_name_to = current_year_feature['feature_name'], change_year_to = current_year_feature['year']) {
+	current_year_feature['feature_name'] = change_feature_name_to
+	current_year_feature['year'] = change_year_to
+	console.log(current_year_feature.toSource())
+	make_layer()
+}
+
+// initialize the map
+change_layer()
+</script>
+</body>
+</html>
