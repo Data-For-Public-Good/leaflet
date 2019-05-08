@@ -249,7 +249,7 @@ function style(feature) {
 
 // this function generates a layer based on the current year and current feature
 function make_layer(year = current_year_feature['year']) {
-	filename = "https://raw.githubusercontent.com/Data-For-Public-Good/leaflet/master/geojsons/zip_" + year.toString() + ".geojson"
+	filename = "https://raw.githubusercontent.com/Data-For-Public-Good/arts-vibrancy-index/master/geojsons/zip_" + year.toString() + ".geojson"
 	geo = L.geoJson({ features: [] }, {
 			style: style,
 			onEachFeature: function popUp(f, l) {
