@@ -259,7 +259,7 @@ function make_layer(year = current_year_feature['year']) {
 			style: style,
 			onEachFeature: function popUp(f, l) {
 				var out = [];
-				var descriptors = ['zip', 'population', 'independent_artists_raw', 'art_firms_raw', 'arts_organizations_raw', 'federal_dollars_raw', 'state_dollars_raw', 'rank']
+				var descriptors = ['population', 'independent_artists_raw', 'art_firms_raw', 'arts_organizations_raw', 'federal_dollars_raw', 'state_dollars_raw', 'rank']
 				if (f.properties) {
 					for (var key in f.properties) {
 						if (descriptors.includes(key)){
@@ -272,6 +272,7 @@ function make_layer(year = current_year_feature['year']) {
 								out.push('<b>' + str + '</b>: ' + parseInt(f.properties[key]).toLocaleString());
 							} // end if key in descriptors
 					} // end loop over f.properties
+					out.unshift('<b>Zip</b>: ' + f.properties['zip'])
 					var possibleZips = Object.keys(zipDict)
 					if (parseInt(f.properties['zip']) in zipDict) {
 						out.unshift('<b>Neighborhood</b>: ' + zipDict[parseInt(f.properties['zip'])])
