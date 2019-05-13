@@ -33,29 +33,44 @@
         }
 
 	.info {
-    	padding: 6px 7px;
+    	padding: 2px 7px;
     	font: 10px/14px Arial, Helvetica, sans-serif;
-    	background: white;
-    	background: rgba(255,255,255,0.8);
     	
-    	border-radius: 5px;
+    	
+    	border-radius: 50px;
     	text-align: left;
     	font-family: arial;
-    	position: static;
-    	right:50px; 
-    	top:700px;
+    	position: relative;
+    	right:10px; 
+    	top:550px;
 
 
 	}
 	.info h4 {
-    	margin: 0 0 2px;
+    	margin: 0 0 1px;
 
     	color: #777;
     	text-align: left;
     	font-family: arial;
     	font-weight: normal;
+ 
 	}
 
+	.info2 {
+    	padding: 6px 8px;
+    	font: 14px/16px Arial, Helvetica, sans-serif;
+    	background: white;
+    	background: rgba(255,255,255,0.8);
+    	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    	border-radius: 5px;
+    	right: 10px;
+    	top: -20px;
+   
+	}
+	.info2 h4 {
+    	margin: 0 0 5px;
+    	color: #777;
+	}
 	
 
 	form {
@@ -349,6 +364,23 @@ info.update = function (props) {
 };
 
 info.addTo(map);
+
+var info2 = L.control();
+
+info2.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info2'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info2.update = function (props) {
+     this._div.innerHTML = '<h4>Mapping Arts NYC</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
+        : 'Click on a zipcode for more information');
+};
+
+info2.addTo(map);
 
 
 
